@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 
 @SuppressWarnings("deprecation")
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+	
     private SurfaceHolder mHolder;
 	private Camera mCamera;
 

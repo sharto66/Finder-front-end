@@ -34,16 +34,19 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class TestActivity extends Activity implements View.OnClickListener {
+public class NewActivity extends Fragment implements View.OnClickListener {
 
 	private final String USER_AGENT = "Mozilla/5.0";
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -60,7 +63,7 @@ public class TestActivity extends Activity implements View.OnClickListener {
 	static String camImage;
 	Bitmap bitmap = null;
 	
-	private BroadcastReceiver receiver = new BroadcastReceiver() {
+	public BroadcastReceiver receiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -74,22 +77,27 @@ public class TestActivity extends Activity implements View.OnClickListener {
 	};
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//locks screen to portrait view
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.test_activity_layout);
-		InitialiseElements();
 	}
 	
-	public void InitialiseElements()
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.test_activity_layout, container, false);
+        InitialiseElements(v);
+        return v;
+    }
+	
+	public void InitialiseElements(View v)
 	{
-		info = (EditText)findViewById(R.id.editText1);
-		v1 = (TextView)findViewById(R.id.textView1);
-		v2 = (TextView)findViewById(R.id.textView2);
-		img = (ImageView) findViewById(R.id.imageDownload);
-		submitBtn = (Button)findViewById(R.id.submit);
+		info = (EditText) v.findViewById(R.id.editText1);
+		v1 = (TextView) v.findViewById(R.id.textView1);
+		v2 = (TextView) v.findViewById(R.id.textView2);
+		img = (ImageView) v.findViewById(R.id.imageDownload);
+		submitBtn = (Button) v.findViewById(R.id.submit);
 		submitBtn.setOnClickListener(this);
-		CameraBtn = (Button)findViewById(R.id.internal_camera);
+		CameraBtn = (Button) v.findViewById(R.id.internal_camera);
 		CameraBtn.setOnClickListener(this);
 //		Intent intent = new Intent(this, DownloadService.class);
 //		startService(intent);
@@ -103,7 +111,6 @@ public class TestActivity extends Activity implements View.OnClickListener {
 	            img.post(new Runnable() {
 	            	 public void run() {
 	            	img.setImageBitmap(bitmap);
-	            	Toast.makeText(getBaseContext(), "Image downloaded successfully", Toast.LENGTH_SHORT).show();
 	            	}
 	            	});
 		        }
@@ -209,16 +216,16 @@ public class TestActivity extends Activity implements View.OnClickListener {
         return bitmap;
 	}
 	
-	@Override
-	  protected void onResume() {
-	    super.onResume();
-	    registerReceiver(receiver, new IntentFilter(DownloadService.NOTIFICATION));
-	  }
-	  @Override
-	  protected void onPause() {
-	    super.onPause();
-	    unregisterReceiver(receiver);
-	  }
+//	@Override
+//	public void onResume() {
+//	    super.onResume();
+//	    registerReceiver(receiver, new IntentFilter(DownloadService.NOTIFICATION));
+//	  }
+//	  @Override
+//	public void onPause() {
+//	    super.onPause();
+//	    unregisterReceiver(receiver);
+//	  }
 	  
 	  private static Uri getOutputMediaFileUri(int type){
 	      return Uri.fromFile(getOutputMediaFile(type));
@@ -253,7 +260,7 @@ public class TestActivity extends Activity implements View.OnClickListener {
 	}
 	  
 	  @Override
-	  protected void onActivityResult(int requestCode, int resultCode, final Intent data){
+	public void onActivityResult(int requestCode, int resultCode, final Intent data){
 
 	      new Thread(new Runnable() {
 		        public void run() {

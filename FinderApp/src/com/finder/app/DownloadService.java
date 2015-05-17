@@ -25,8 +25,7 @@ public class DownloadService extends IntentService {
 	  protected void onHandleIntent(Intent intent) {
 			
 		  try{
-			  System.out.println("First line of download");
-			URL url = new URL("http://3-dot-finder-backend.appspot.com/get");
+			 URL url = new URL("http://4-dot-finder-backend.appspot.com/get");
 			
 	         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	         conn.setRequestMethod("GET");
