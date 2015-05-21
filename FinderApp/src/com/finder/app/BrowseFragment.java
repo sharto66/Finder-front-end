@@ -66,11 +66,11 @@ public class BrowseFragment extends FragmentActivity {
         	}
         	else if(position == 1)
         	{
-        		return new ScreenSlidePageFragment();
+        		return new CameraActivity();
         	}
         	else
         	{
-        		return new ScreenSlidePageFragment();
+        		return new ImagesPageFragment();
         	}
         }
 

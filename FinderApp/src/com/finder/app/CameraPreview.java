@@ -37,6 +37,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         // empty. Take care of releasing the Camera preview in your activity.
+    	if (mCamera != null) {
+            // Call stopPreview() to stop updating the preview surface.
+            mCamera.stopPreview();
+        }
+
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
@@ -57,6 +62,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // set preview size and make any resize, rotate or
         // reformatting changes here
+        
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setRotation(90);
+        requestLayout();
+        mCamera.setParameters(parameters);
+
 
         // start preview with new settings
         try {
@@ -65,6 +76,22 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         } catch (Exception e){
         	System.out.println("Camera Error");
+        }
+        
+    }
+    
+    private void stopPreviewAndFreeCamera() {
+
+        if (mCamera != null) {
+            // Call stopPreview() to stop updating the preview surface.
+            mCamera.stopPreview();
+        
+            // Important: Call release() to release the camera for use by other
+            // applications. Applications should release the camera immediately
+            // during onPause() and re-open() it during onResume()).
+            mCamera.release();
+        
+            mCamera = null;
         }
     }
 }

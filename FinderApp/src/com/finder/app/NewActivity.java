@@ -1,6 +1,5 @@
 package com.finder.app;
 
-import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -101,20 +100,20 @@ public class NewActivity extends Fragment implements View.OnClickListener {
 		CameraBtn.setOnClickListener(this);
 //		Intent intent = new Intent(this, DownloadService.class);
 //		startService(intent);
-		new Thread(new Runnable() {
-	        public void run() {
-	            try {
-					bitmap = GET();
-				} catch (Exception e) {
-					e.printStackTrace();
-					}
-	            img.post(new Runnable() {
-	            	 public void run() {
-	            	img.setImageBitmap(bitmap);
-	            	}
-	            	});
-		        }
-		    }).start();
+//		new Thread(new Runnable() {
+//	        public void run() {
+//	            try {
+//					bitmap = GET();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					}
+//	            img.post(new Runnable() {
+//	            	 public void run() {
+//	            	img.setImageBitmap(bitmap);
+//	            	}
+//	            	});
+//		        }
+//		    }).start();
 	}
 	
 	public void POST() throws Exception {
@@ -179,18 +178,18 @@ public class NewActivity extends Fragment implements View.OnClickListener {
 		  wr.flush();
 		  wr.close();
 		  
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	  		String inputLine;
-	   
-	  		while ((inputLine = in.readLine()) != null) {
-	  			System.out.println(inputLine);
-	  		}
-	  		in.close();
-			  
-			int responseCode = ((HttpURLConnection) conn).getResponseCode();
-			System.out.println(responseCode);
-			
-			System.out.println(image.delete());
+		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+  		String inputLine;
+   
+  		while ((inputLine = in.readLine()) != null) {
+  			System.out.println(inputLine);
+  		}
+  		in.close();
+		  
+		int responseCode = ((HttpURLConnection) conn).getResponseCode();
+		System.out.println(responseCode);
+		
+		System.out.println(image.delete());
     }
 	
 	public Bitmap GET() throws Exception {
@@ -198,7 +197,7 @@ public class NewActivity extends Fragment implements View.OnClickListener {
 		Bitmap bitmap = null;
         InputStream iStream = null;
         try{
-            URL url = new URL("http://3-dot-finder-backend.appspot.com/serve?img-key=wut.jpg");
+            URL url = new URL("http://4-dot-finder-backend.appspot.com/serve?img-name=wut.jpg");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoInput(true);
             iStream = conn.getInputStream();
