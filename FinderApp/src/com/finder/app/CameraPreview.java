@@ -80,7 +80,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         
     }
     
-    private void stopPreviewAndFreeCamera() {
+    public void stopPreviewAndFreeCamera() {
 
         if (mCamera != null) {
             // Call stopPreview() to stop updating the preview surface.

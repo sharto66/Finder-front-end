@@ -62,7 +62,7 @@ public class BrowseFragment extends FragmentActivity {
         public Fragment getItem(int position) {
         	if(position == 0)
         	{
-        		return new NewActivity();
+        		return new ImagesPageFragment();
         	}
         	else if(position == 1)
         	{
@@ -70,7 +70,7 @@ public class BrowseFragment extends FragmentActivity {
         	}
         	else
         	{
-        		return new ImagesPageFragment();
+        		return new NewActivity();
         	}
         }
 

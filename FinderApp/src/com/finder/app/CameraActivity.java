@@ -20,7 +20,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 @SuppressWarnings("deprecation")
-public class CameraActivity extends Fragment implements View.OnClickListener, OnPageChangeListener {
+public class CameraActivity extends Fragment implements View.OnClickListener {
 
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	Button btn;
@@ -124,23 +124,16 @@ public class CameraActivity extends Fragment implements View.OnClickListener, On
 				break;
 		}
 	}
-
+	
 	@Override
-	public void onPageScrollStateChanged(int arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPageSelected(int arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onResume() {
+	    super.onResume();
+	    mCamera.startPreview();
+	  }
+	  @Override
+	public void onPause() {
+	    super.onPause();
+	    mPreview.stopPreviewAndFreeCamera();
+	  }
     
 }
