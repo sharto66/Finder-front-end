@@ -90,8 +90,8 @@ public class TestActivity extends Activity implements View.OnClickListener {
 		submitBtn.setOnClickListener(this);
 		CameraBtn = (Button)findViewById(R.id.internal_camera);
 		CameraBtn.setOnClickListener(this);
-//		Intent intent = new Intent(this, DownloadService.class);
-//		startService(intent);
+		Intent intent = new Intent(this, DownloadService.class);
+		startService(intent);
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {

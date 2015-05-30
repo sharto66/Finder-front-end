@@ -1,6 +1,8 @@
 package com.finder.app;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -10,6 +12,9 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 
 public class DownloadService extends IntentService {
 	
@@ -22,34 +27,42 @@ public class DownloadService extends IntentService {
 	  }
 	
 	  @Override
-	  protected void onHandleIntent(Intent intent) {
+	  protected void onHandleIntent(Intent intent){
 			
-		  try{
-			 URL url = new URL("http://4-dot-finder-backend.appspot.com/get");
-			
-	         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	         conn.setRequestMethod("GET");
-	         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	         String resultSet = "";
-	         JSONObject json = new JSONObject(rd.readLine());
-	
-	         for(int i = 0; i < json.length(); i++)
-	         {
-	        	 resultSet += json.get("text" + Integer.toString(i)) + "\n";
-	         }
-	         System.out.println("Last line of download");
-	         publishResults(resultSet);
-		  }
-		  catch(Exception e)
-		  {
-			  System.out.println("Error in Service");
-		  }
+		    Bitmap bitmap = null;
+	        InputStream iStream = null;
+	        try
+	        {
+	            URL url = new URL("http://4-dot-finder-backend.appspot.com/serveimages");
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setDoInput(true);
+	            iStream = conn.getInputStream();
+	            bitmap = BitmapFactory.decodeStream(iStream);
+	            System.out.println("Test before");
+	            ((ImageList) this.getApplication()).imageList.add(bitmap);
+	            System.out.println("Test after");
+	            int responseCode = conn.getResponseCode();
+	            System.out.println(Integer.toString(responseCode));
+	            publishResults();
+	        }
+	        catch(Exception e)
+	        {
+	            Log.d("Exception while downloading url", e.toString());
+	        }
+	        finally
+	        {
+	            try {
+					iStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	        }
 		}
 	  
-	  private void publishResults(String result)
+	  private void publishResults()
 	  {
 			Intent intent = new Intent(NOTIFICATION);
-			intent.putExtra(RESULT, result);
+			intent.putExtra(RESULT, "OK");
 			sendBroadcast(intent);
 	  }
 

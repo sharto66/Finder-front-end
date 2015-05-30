@@ -1,5 +1,6 @@
 package com.finder.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -31,10 +32,10 @@ public class BrowseFragment extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_slide);
 
-        // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
+        
     }
 
     @Override
@@ -50,7 +51,7 @@ public class BrowseFragment extends FragmentActivity {
     }
 
     /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * A simple pager adapter that represents 3 ScreenSlidePageFragment objects, in
      * sequence.
      */
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -62,7 +63,7 @@ public class BrowseFragment extends FragmentActivity {
         public Fragment getItem(int position) {
         	if(position == 0)
         	{
-        		return new ImagesPageFragment();
+        		return new NewActivity();
         	}
         	else if(position == 1)
         	{
@@ -70,7 +71,7 @@ public class BrowseFragment extends FragmentActivity {
         	}
         	else
         	{
-        		return new NewActivity();
+        		return new ImagesPageFragment();
         	}
         }
 

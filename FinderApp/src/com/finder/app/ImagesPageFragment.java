@@ -3,6 +3,7 @@ package com.finder.app;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -16,12 +17,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ImagesPageFragment extends Fragment implements View.OnClickListener {
 	
-	static int count;
-	static int imgCount;
-	static List<Bitmap> imageList;
+	List<Bitmap> imageList = new ArrayList<Bitmap>();
+	int count;
+	int imgCount = 0;
 	
 	Button btn;
 	ImageView image;
@@ -34,13 +36,7 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
         ViewGroup v = (ViewGroup) inflater.inflate(
                 R.layout.fragment_image_screen, container, false);
         InitElements(v);
-        try
-		{
-			Download();
-		}
-		catch (Exception e){
-			e.printStackTrace();
-		}
+	    InitDownload();
         return v;
     }
     
@@ -52,29 +48,28 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     	text = (TextView) v.findViewById(R.id.imageLabel);
     }
     
-    public void Download() throws Exception
+    public void InitDownload()
     {
+    	for(int i = 0; i < 5; i++)
+    	{
 	    	new Thread(new Runnable() {
 		        public void run() {
 		            try {
-		            	bitmap = getImage();
+		            	getImage();
 					} catch (Exception e) {
 						e.printStackTrace();
 						}
 		            image.post(new Runnable() {
-		            	 public void run() {
-		            		 try{
-		            			 image.setImageBitmap(bitmap);
-		            			 btn.setEnabled(true);
-		            		 }
-		            		 catch(Exception e){}
+		            	public void run() {
+		            		//image.setImageBitmap(imageList.get(0));
 		            	}
-		            	});
+		            });
 			        }
 			    }).start();
+    	}
     }
     
-	public Bitmap getImage() throws Exception
+	public void getImage() throws Exception
 	{
 		Bitmap bitmap = null;
         InputStream iStream = null;
@@ -86,13 +81,13 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
             bitmap = BitmapFactory.decodeStream(iStream);
             int responseCode = conn.getResponseCode();
             System.out.println(Integer.toString(responseCode));
- 
+            imageList.add(bitmap);
+            System.out.println("List size: " + Integer.toString(imageList.size()));
         }catch(Exception e){
             Log.d("Exception while downloading url", e.toString());
         }finally{
             iStream.close();
         }
-        return bitmap;
 	}
 
 	@Override
@@ -100,12 +95,24 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 		switch(v.getId())
 		{
 			case R.id.nextButton :
-				btn.setEnabled(false);
-				try {
-					Download();
-				} catch (Exception e) {
-					e.printStackTrace();
+				//btn.setEnabled(false);
+				if(imgCount % 3 == 0)
+				{
+					for(int i = 0; i < 5; i++)
+					{
+						new Thread(new Runnable() {
+					        public void run() {
+					            try {
+					            	getImage();
+								} catch (Exception e) {
+									e.printStackTrace();
+									}
+						        }
+						    }).start();
+					}
 				}
+				imgCount++;
+				image.setImageBitmap(imageList.get(imgCount));
 				break;
 		}
 	}
