@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,12 +18,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ImagesPageFragment extends Fragment implements View.OnClickListener {
 	
-	List<Bitmap> imageList = new ArrayList<Bitmap>();
-	int count;
+	List<ImageList> imageList = new ArrayList<ImageList>();
 	int imgCount = 0;
 	
 	Button btn;
@@ -50,7 +49,8 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     
     public void InitDownload()
     {
-    	for(int i = 0; i < 5; i++)
+    	btn.setEnabled(false);
+    	for(int i = 0; i < 10; i++)
     	{
 	    	new Thread(new Runnable() {
 		        public void run() {
@@ -61,7 +61,8 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 						}
 		            image.post(new Runnable() {
 		            	public void run() {
-		            		//image.setImageBitmap(imageList.get(0));
+		            		btn.setEnabled(true);
+		            		image.setImageBitmap(imageList.get(0).image);
 		            	}
 		            });
 			        }
@@ -77,16 +78,20 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
             URL url = new URL("http://4-dot-finder-backend.appspot.com/serveimages");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoInput(true);
+            Map<String, List<String>> filename = conn.getHeaderFields();
+            System.out.println(filename);
+            String name = conn.getHeaderField("Content-Disposition");
+            System.out.println(name);
             iStream = conn.getInputStream();
             bitmap = BitmapFactory.decodeStream(iStream);
             int responseCode = conn.getResponseCode();
             System.out.println(Integer.toString(responseCode));
-            imageList.add(bitmap);
+            imageList.add(new ImageList(bitmap, name));
             System.out.println("List size: " + Integer.toString(imageList.size()));
         }catch(Exception e){
             Log.d("Exception while downloading url", e.toString());
         }finally{
-            iStream.close();
+            //iStream.close();
         }
 	}
 
@@ -95,10 +100,9 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 		switch(v.getId())
 		{
 			case R.id.nextButton :
-				//btn.setEnabled(false);
-				if(imgCount % 3 == 0)
+				if(imgCount % 6 == 0)
 				{
-					for(int i = 0; i < 5; i++)
+					for(int i = 0; i < 10; i++)
 					{
 						new Thread(new Runnable() {
 					        public void run() {
@@ -110,9 +114,13 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 						        }
 						    }).start();
 					}
+					imgCount = 0;
 				}
+				System.out.println("Before: " + Integer.toString(imageList.size()));
+				imageList.remove(0);
+				System.out.println("After: " + Integer.toString(imageList.size()));
+				image.setImageBitmap(imageList.get(0).image);
 				imgCount++;
-				image.setImageBitmap(imageList.get(imgCount));
 				break;
 		}
 	}

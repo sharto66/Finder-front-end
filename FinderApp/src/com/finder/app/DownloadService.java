@@ -39,7 +39,7 @@ public class DownloadService extends IntentService {
 	            iStream = conn.getInputStream();
 	            bitmap = BitmapFactory.decodeStream(iStream);
 	            System.out.println("Test before");
-	            ((ImageList) this.getApplication()).imageList.add(bitmap);
+	            //((ImageList) this.getApplication()).imageList.add(bitmap);
 	            System.out.println("Test after");
 	            int responseCode = conn.getResponseCode();
 	            System.out.println(Integer.toString(responseCode));
