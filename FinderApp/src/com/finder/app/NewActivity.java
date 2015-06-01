@@ -98,22 +98,6 @@ public class NewActivity extends Fragment implements View.OnClickListener {
 		submitBtn.setOnClickListener(this);
 		CameraBtn = (Button) v.findViewById(R.id.internal_camera);
 		CameraBtn.setOnClickListener(this);
-//		Intent intent = new Intent(this, DownloadService.class);
-//		startService(intent);
-//		new Thread(new Runnable() {
-//	        public void run() {
-//	            try {
-//					bitmap = GET();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					}
-//	            img.post(new Runnable() {
-//	            	 public void run() {
-//	            	img.setImageBitmap(bitmap);
-//	            	}
-//	            	});
-//		        }
-//		    }).start();
 	}
 	
 	public void POST() throws Exception {
@@ -214,17 +198,6 @@ public class NewActivity extends Fragment implements View.OnClickListener {
         }
         return bitmap;
 	}
-	
-//	@Override
-//	public void onResume() {
-//	    super.onResume();
-//	    registerReceiver(receiver, new IntentFilter(DownloadService.NOTIFICATION));
-//	  }
-//	  @Override
-//	public void onPause() {
-//	    super.onPause();
-//	    unregisterReceiver(receiver);
-//	  }
 	  
 	  private static Uri getOutputMediaFileUri(int type){
 	      return Uri.fromFile(getOutputMediaFile(type));

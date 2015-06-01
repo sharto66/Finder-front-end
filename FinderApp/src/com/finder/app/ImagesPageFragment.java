@@ -5,10 +5,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -21,7 +23,9 @@ import android.widget.TextView;
 
 public class ImagesPageFragment extends Fragment implements View.OnClickListener {
 	
-	List<ImageList> imageList = new ArrayList<ImageList>();
+	static List<ImageList> imageList = new ArrayList<ImageList>();
+	public final static int AMOUNT = 8;
+	public final static int MOD = 5;
 	int imgCount = 0;
 	
 	Button btn;
@@ -32,10 +36,12 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        ViewGroup v = (ViewGroup) inflater.inflate(
-                R.layout.fragment_image_screen, container, false);
+        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_image_screen, container, false);
         InitElements(v);
-	    InitDownload();
+        if(checkConnection())
+        {
+        	InitDownload();
+        }
         return v;
     }
     
@@ -50,7 +56,7 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     public void InitDownload()
     {
     	btn.setEnabled(false);
-    	for(int i = 0; i < 10; i++)
+    	for(int i = 0; i < AMOUNT; i++)
     	{
 	    	new Thread(new Runnable() {
 		        public void run() {
@@ -70,6 +76,14 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     	}
     }
     
+    public boolean checkConnection()
+    {
+    	ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+    	NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+    	boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+    	return isConnected;
+    }
+    
 	public void getImage() throws Exception
 	{
 		Bitmap bitmap = null;
@@ -78,10 +92,7 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
             URL url = new URL("http://4-dot-finder-backend.appspot.com/serveimages");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoInput(true);
-            Map<String, List<String>> filename = conn.getHeaderFields();
-            System.out.println(filename);
             String name = conn.getHeaderField("Content-Disposition");
-            System.out.println(name);
             iStream = conn.getInputStream();
             bitmap = BitmapFactory.decodeStream(iStream);
             int responseCode = conn.getResponseCode();
@@ -94,15 +105,27 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
             //iStream.close();
         }
 	}
+	
+	@Override
+	public void onResume() {
+	    super.onResume();
+	    
+	}
+	
+	@Override
+	public void onPause() {
+	    super.onPause();
+	    
+	}
 
 	@Override
 	public void onClick(View v) {
 		switch(v.getId())
 		{
 			case R.id.nextButton :
-				if(imgCount % 6 == 0)
+				if(imgCount % MOD == 0 && checkConnection())
 				{
-					for(int i = 0; i < 10; i++)
+					for(int i = 0; i < AMOUNT; i++)
 					{
 						new Thread(new Runnable() {
 					        public void run() {
@@ -116,13 +139,15 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 					}
 					imgCount = 0;
 				}
-				System.out.println("Before: " + Integer.toString(imageList.size()));
-				imageList.remove(0);
-				System.out.println("After: " + Integer.toString(imageList.size()));
-				image.setImageBitmap(imageList.get(0).image);
-				imgCount++;
+				if(checkConnection())
+				{
+					System.out.println("Before: " + Integer.toString(imageList.size()));
+					imageList.remove(0);
+					System.out.println("After: " + Integer.toString(imageList.size()));
+					image.setImageBitmap(imageList.get(0).image);
+					imgCount++;
+				}
 				break;
 		}
 	}
-
 }

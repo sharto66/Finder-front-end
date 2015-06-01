@@ -49,6 +49,18 @@ public class BrowseFragment extends FragmentActivity {
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }
+    
+    @Override
+	public void onResume() {
+	    super.onResume();
+	    System.out.println("Resumed");
+	}
+	
+	@Override
+	public void onPause() {
+	    super.onPause();
+	    System.out.println("Paused");
+	}
 
     /**
      * A simple pager adapter that represents 3 ScreenSlidePageFragment objects, in
@@ -67,7 +79,7 @@ public class BrowseFragment extends FragmentActivity {
         	}
         	else if(position == 1)
         	{
-        		return new CameraActivity();
+        		return new ScreenSlidePageFragment();
         	}
         	else
         	{
