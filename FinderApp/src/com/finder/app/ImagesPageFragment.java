@@ -24,8 +24,8 @@ import android.widget.TextView;
 public class ImagesPageFragment extends Fragment implements View.OnClickListener {
 	
 	static List<ImageList> imageList = new ArrayList<ImageList>();
-	public final static int AMOUNT = 8;
-	public final static int MOD = 5;
+	public final static int AMOUNT = 10;
+	public final static int MOD = 4;
 	int imgCount = 0;
 	
 	Button btn;
@@ -123,7 +123,7 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 		switch(v.getId())
 		{
 			case R.id.nextButton :
-				if(imgCount % MOD == 0 && checkConnection())
+				if(imgCount == MOD && checkConnection())
 				{
 					for(int i = 0; i < AMOUNT; i++)
 					{
@@ -146,6 +146,10 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 					System.out.println("After: " + Integer.toString(imageList.size()));
 					image.setImageBitmap(imageList.get(0).image);
 					imgCount++;
+				}
+				while(imageList.size() > 15)
+				{
+					imageList.remove(imageList.size() - 1);
 				}
 				break;
 		}
