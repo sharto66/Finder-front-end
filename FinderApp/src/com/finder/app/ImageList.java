@@ -1,8 +1,10 @@
 package com.finder.app;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class ImageList {
+public class ImageList implements Parcelable {
 	
 	public Bitmap image;
 	public String name;
@@ -17,5 +19,17 @@ public class ImageList {
 	{
 		this.image = image;
 		this.name = name;
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		// TODO Auto-generated method stub
+		
 	}
 }

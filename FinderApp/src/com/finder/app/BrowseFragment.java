@@ -75,15 +75,15 @@ public class BrowseFragment extends FragmentActivity {
         public Fragment getItem(int position) {
         	if(position == 0)
         	{
-        		return new NewActivity();
+        		return new ImagesPageFragment();
         	}
         	else if(position == 1)
         	{
-        		return new ScreenSlidePageFragment();
+        		return new NewActivity();
         	}
         	else
         	{
-        		return new ImagesPageFragment();
+        		return new ScreenSlidePageFragment();
         	}
         }
 

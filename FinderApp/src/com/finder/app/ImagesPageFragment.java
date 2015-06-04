@@ -6,7 +6,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -45,6 +47,15 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
         return v;
     }
     
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            Activity a = getActivity();
+            if(a != null) a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+    
     public void InitElements(View v)
     {
     	btn = (Button) v.findViewById(R.id.nextButton);
@@ -61,7 +72,7 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 	    	new Thread(new Runnable() {
 		        public void run() {
 		            try {
-		            	getImage();
+		            	imageList.add(getImage());
 					} catch (Exception e) {
 						e.printStackTrace();
 						}
@@ -78,16 +89,25 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     
     public boolean checkConnection()
     {
-    	ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-    	NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-    	boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+    	boolean isConnected = false;
+    	try
+    	{
+    		ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        	NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        	isConnected = activeNetwork != null && activeNetwork.isConnected();
+    	}
+    	catch(Exception e)
+    	{
+    		e.printStackTrace();
+    	}
     	return isConnected;
     }
     
-	public void getImage() throws Exception
+	public ImageList getImage() throws Exception
 	{
 		Bitmap bitmap = null;
         InputStream iStream = null;
+        ImageList i = null;
         try{
             URL url = new URL("http://4-dot-finder-backend.appspot.com/serveimages");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -97,13 +117,15 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
             bitmap = BitmapFactory.decodeStream(iStream);
             int responseCode = conn.getResponseCode();
             System.out.println(Integer.toString(responseCode));
-            imageList.add(new ImageList(bitmap, name));
+            //imageList.add(new ImageList(bitmap, name));
+            i = new ImageList(bitmap, name);
             System.out.println("List size: " + Integer.toString(imageList.size()));
         }catch(Exception e){
             Log.d("Exception while downloading url", e.toString());
         }finally{
             //iStream.close();
         }
+        return i;
 	}
 	
 	@Override
@@ -117,6 +139,14 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 	    super.onPause();
 	    
 	}
+	
+//	@Override
+//	public void onSaveInstanceState(Bundle savedInstanceState) 
+//	{
+//	  savedInstanceState.putParcelableArrayList(key, value);
+//
+//	  super.onSaveInstanceState(savedInstanceState);
+//	}
 
 	@Override
 	public void onClick(View v) {
@@ -130,7 +160,9 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 						new Thread(new Runnable() {
 					        public void run() {
 					            try {
-					            	getImage();
+					            	if(imageList.size() < 15) {
+					            		imageList.add(getImage());
+					            	}
 								} catch (Exception e) {
 									e.printStackTrace();
 									}
@@ -139,13 +171,20 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 					}
 					imgCount = 0;
 				}
-				if(checkConnection())
+				if(checkConnection() && imageList.size() > 1)
 				{
-					System.out.println("Before: " + Integer.toString(imageList.size()));
-					imageList.remove(0);
-					System.out.println("After: " + Integer.toString(imageList.size()));
-					image.setImageBitmap(imageList.get(0).image);
-					imgCount++;
+					try
+					{
+						System.out.println("Before: " + Integer.toString(imageList.size()));
+						imageList.remove(0);
+						System.out.println("After: " + Integer.toString(imageList.size()));
+						System.out.println(imageList.get(0).name);
+						image.setImageBitmap(imageList.get(0).image);
+						imgCount++;
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 				while(imageList.size() > 15)
 				{

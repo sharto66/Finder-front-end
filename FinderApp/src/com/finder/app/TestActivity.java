@@ -82,11 +82,6 @@ public class TestActivity extends Activity implements View.OnClickListener {
 	
 	public void InitialiseElements()
 	{
-		info = (EditText)findViewById(R.id.editText1);
-		v1 = (TextView)findViewById(R.id.textView1);
-		v2 = (TextView)findViewById(R.id.textView2);
-		img = (ImageView) findViewById(R.id.imageDownload);
-		submitBtn = (Button)findViewById(R.id.submit);
 		submitBtn.setOnClickListener(this);
 		CameraBtn = (Button)findViewById(R.id.internal_camera);
 		CameraBtn.setOnClickListener(this);
@@ -275,17 +270,6 @@ public class TestActivity extends Activity implements View.OnClickListener {
 			fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);  // create a file to save the video
 		    intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 		    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-		}
-		if(view.getId() == R.id.submit) {
-			new Thread(new Runnable() {
-		        public void run() {
-		            try {
-						POST();
-					} catch (Exception e) {
-						e.printStackTrace();
-						}
-			        }
-			    }).start();
 		}
 	}
 }
