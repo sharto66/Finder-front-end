@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -25,13 +26,16 @@ import android.widget.TextView;
 
 public class ImagesPageFragment extends Fragment implements View.OnClickListener {
 	
-	static List<ImageList> imageList = new ArrayList<ImageList>();
-	public final static int AMOUNT = 10;
-	public final static int MOD = 4;
+	List<ImageList> imageList = new ArrayList<ImageList>();
+	
+	public final static int TOTAL = 10;
+	public final static int AMOUNT = 6;
+	public final static int MOD = 1;
 	int imgCount = 0;
 	
 	Button btn;
-	ImageView image;
+	ImageView image1;
+	ImageView image2;
 	TextView text;
 	Bitmap bitmap;
 
@@ -60,7 +64,8 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     {
     	btn = (Button) v.findViewById(R.id.nextButton);
     	btn.setOnClickListener(this);
-    	image = (ImageView) v.findViewById(R.id.imageDisplay);
+    	image1 = (ImageView) v.findViewById(R.id.imageDisplay1);
+    	image2 = (ImageView) v.findViewById(R.id.imageDisplay2);
     	text = (TextView) v.findViewById(R.id.imageLabel);
     }
     
@@ -76,10 +81,18 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 					} catch (Exception e) {
 						e.printStackTrace();
 						}
-		            image.post(new Runnable() {
+		            image1.post(new Runnable() {
 		            	public void run() {
 		            		btn.setEnabled(true);
-		            		image.setImageBitmap(imageList.get(0).image);
+		            		try{
+		            			if(imageList.get(0) != null && imageList.get(1) != null) {
+		            				image1.setImageBitmap(imageList.get(0).image);
+		            				image2.setImageBitmap(imageList.get(1).image);
+		            			}
+		            		}
+		            		catch(Exception e) {
+		            			e.printStackTrace();
+		            		}
 		            	}
 		            });
 			        }
@@ -117,7 +130,6 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
             bitmap = BitmapFactory.decodeStream(iStream);
             int responseCode = conn.getResponseCode();
             System.out.println(Integer.toString(responseCode));
-            //imageList.add(new ImageList(bitmap, name));
             i = new ImageList(bitmap, name);
             System.out.println("List size: " + Integer.toString(imageList.size()));
         }catch(Exception e){
@@ -126,6 +138,28 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
             //iStream.close();
         }
         return i;
+	}
+	
+	public void Download()
+	{
+		for(int i = 0; i < AMOUNT; i++)
+		{
+			new Thread(new Runnable() {
+		        public void run() {
+		        	ImageList im = new ImageList();
+		            try {
+		            	if(imageList.size() < TOTAL) {
+		            		im = getImage();
+		            		if(imageList.size() < TOTAL) {
+		            			imageList.add(im);
+		            		}
+		            	}
+					} catch (Exception e) {
+						e.printStackTrace();
+						}
+			        }
+			    }).start();
+		}
 	}
 	
 	@Override
@@ -153,42 +187,27 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 		switch(v.getId())
 		{
 			case R.id.nextButton :
-				if(imgCount == MOD && checkConnection())
+				if(checkConnection())
 				{
-					for(int i = 0; i < AMOUNT; i++)
-					{
-						new Thread(new Runnable() {
-					        public void run() {
-					            try {
-					            	if(imageList.size() < 15) {
-					            		imageList.add(getImage());
-					            	}
-								} catch (Exception e) {
-									e.printStackTrace();
-									}
-						        }
-						    }).start();
-					}
-					imgCount = 0;
+					Download();
+					//imgCount = 0;
 				}
-				if(checkConnection() && imageList.size() > 1)
+				if(checkConnection() && imageList.size() > 2)
 				{
+					System.out.println("test");
 					try
 					{
 						System.out.println("Before: " + Integer.toString(imageList.size()));
 						imageList.remove(0);
+						imageList.remove(1);
 						System.out.println("After: " + Integer.toString(imageList.size()));
-						System.out.println(imageList.get(0).name);
-						image.setImageBitmap(imageList.get(0).image);
+						image1.setImageBitmap(imageList.get(0).image);
+						image2.setImageBitmap(imageList.get(1).image);
 						imgCount++;
 					}
 					catch(Exception e){
 						e.printStackTrace();
 					}
-				}
-				while(imageList.size() > 15)
-				{
-					imageList.remove(imageList.size() - 1);
 				}
 				break;
 		}

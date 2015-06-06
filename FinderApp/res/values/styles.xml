@@ -1,4 +1,7 @@
 <resources>
+    
+    <color name="light_blue">#20F5F5</color>
+    <color name="border_colour">#ffffff</color>
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -15,6 +18,15 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:background">@color/light_blue</item>
+        <item name="android:windowActionBar">false</item>
+		<item name="android:windowTitleSize">0dp</item>
     </style>
+    
+    <style name="ImageBorder">
+	    <!-- 3dp so the background border to be visible -->
+	    <item name="android:padding">3dp</item>
+	    <item name="android:background">@drawable/image_border</item>
+	</style>
 
 </resources>
