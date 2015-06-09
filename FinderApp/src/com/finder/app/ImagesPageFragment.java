@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 public class ImagesPageFragment extends Fragment implements View.OnClickListener {
@@ -31,7 +32,8 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 	public final static int TOTAL = 10;
 	public final static int AMOUNT = 6;
 	public final static int MOD = 1;
-	int imgCount = 0;
+	
+	boolean fullScreen = false;
 	
 	Button btn;
 	ImageView image1;
@@ -66,7 +68,8 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
     	btn.setOnClickListener(this);
     	image1 = (ImageView) v.findViewById(R.id.imageDisplay1);
     	image2 = (ImageView) v.findViewById(R.id.imageDisplay2);
-    	text = (TextView) v.findViewById(R.id.imageLabel);
+    	image1.setOnClickListener(this);
+    	image2.setOnClickListener(this);
     }
     
     public void InitDownload()
@@ -165,13 +168,11 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onResume() {
 	    super.onResume();
-	    
 	}
 	
 	@Override
 	public void onPause() {
 	    super.onPause();
-	    
 	}
 	
 //	@Override
@@ -190,7 +191,6 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 				if(checkConnection())
 				{
 					Download();
-					//imgCount = 0;
 				}
 				if(checkConnection() && imageList.size() > 2)
 				{
@@ -203,12 +203,17 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 						System.out.println("After: " + Integer.toString(imageList.size()));
 						image1.setImageBitmap(imageList.get(0).image);
 						image2.setImageBitmap(imageList.get(1).image);
-						imgCount++;
 					}
 					catch(Exception e){
 						e.printStackTrace();
 					}
 				}
+				break;
+			case R.id.imageDisplay1 :
+				
+				break;
+			case R.id.imageDisplay2 :
+				
 				break;
 		}
 	}
