@@ -1,6 +1,9 @@
 package com.finder.app;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,11 +32,9 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 	
 	List<ImageList> imageList = new ArrayList<ImageList>();
 	
-	public final static int TOTAL = 10;
-	public final static int AMOUNT = 6;
-	public final static int MOD = 1;
-	
-	boolean fullScreen = false;
+	final static int TOTAL = 10;
+	final static int AMOUNT = 6;
+	final static int MOD = 1;
 	
 	Button btn;
 	ImageView image1;
@@ -138,7 +139,7 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
         }catch(Exception e){
             Log.d("Exception while downloading url", e.toString());
         }finally{
-            //iStream.close();
+            iStream.close();
         }
         return i;
 	}
@@ -164,6 +165,25 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 			    }).start();
 		}
 	}
+	
+	public void ScoreImage(String name, int score)
+	{
+		try
+		{
+	        URL url = new URL("http://4-dot-finder-backend.appspot.com/score?name=" + name + "&score=" + Integer.toString(score));
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("POST");
+	  		conn.setDoOutput(true);
+	        DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+	        wr.flush();
+	        wr.close();
+	        int responseCode = conn.getResponseCode();
+	        System.out.println(Integer.toString(responseCode));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+    }
 	
 	@Override
 	public void onResume() {
@@ -210,10 +230,30 @@ public class ImagesPageFragment extends Fragment implements View.OnClickListener
 				}
 				break;
 			case R.id.imageDisplay1 :
-				
+				 new Thread(new Runnable() {
+				        public void run() {
+				            try {
+				            	ScoreImage(imageList.get(0).name, 1);
+								ScoreImage(imageList.get(1).name, 0);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+				        }
+				    }).start();
 				break;
 			case R.id.imageDisplay2 :
-				
+				new Thread(new Runnable() {
+			        public void run() {
+			            try {
+			            	ScoreImage(imageList.get(1).name, 1);
+							ScoreImage(imageList.get(0).name, 0);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			        }
+			    }).start();
 				break;
 		}
 	}

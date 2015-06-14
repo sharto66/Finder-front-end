@@ -110,7 +110,7 @@ public class TestActivity extends Activity implements View.OnClickListener {
         URL url = new URL("http://4-dot-finder-backend.appspot.com/submit");
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod("GET");
         conn.setRequestProperty("User-Agent", USER_AGENT);
   		conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
   		conn.setDoOutput(true);
